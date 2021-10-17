@@ -15,6 +15,7 @@ let disneyUid = process.env.DSNY_UID;
 let disneyPwd = process.env.DSNY_PWD;
 let outlookUid = process.env.OUTLK_UID;
 let outlookPwd = process.env.OUTLK_PWD;
+let verifAddr = process.env.VERIF_ADDR;
 let outlookFrm = process.env.OUTLK_FRM;
 let nums = process.env.NUMS;
 let num1 = nums.split(',')[0];
@@ -85,7 +86,7 @@ async function getDisneyReceipt() {
     await page.waitForSelector('[data-testid*="invoice-link-"]');
     await page.click('[data-testid*="invoice-link-"]');
     await page.waitForSelector('[data-gv2containerkey="modalContainer"] > div');
-    var receipt = await page.$('[data-gv2containerkey="modalContainer"] > div');
+    let receipt = await page.$('[data-gv2containerkey="modalContainer"] > div');
     disneyPlusScreenshotFilename = `disney_plus_screenshot_${Math.floor(Date.now() / 1000)}.png`;
     disneyPlusScreenshotPath = `./screenshots/${disneyPlusScreenshotFilename}`;
     await receipt.screenshot({ path: disneyPlusScreenshotPath });
@@ -108,9 +109,9 @@ async function main() {
     emailBody = emailBody.replace('[[NUM2]]', num2);
     emailBody = emailBody.replace('[[OUTLK_FRM]]', outlookFrm);
 
-    var mailOptions = {
+    let mailOptions = {
         from: `"${outlookFrm}" <${outlookUid}>`,
-        to: 'verification@usmobile.com',
+        to: verifAddr,
         bcc: [
             outlookUid
         ],
@@ -133,7 +134,7 @@ async function main() {
 }
 
 async function handleError(error) {
-    var mailOptions = {
+    let mailOptions = {
         from: `"${outlookFrm}" <${outlookUid}>`,
         to: outlookUid,
         subject: 'US Mobile verification failure',
@@ -144,7 +145,7 @@ async function handleError(error) {
 }
 
 async function sendEmail(mailOptions) {
-    var transporter = nodemailer.createTransport({
+    let transporter = nodemailer.createTransport({
         host: 'smtp-mail.outlook.com',
         secure: false,
         port: 587,

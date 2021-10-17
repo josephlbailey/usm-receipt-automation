@@ -24,6 +24,9 @@ OUTLK_FRM="Your Name"
 
 # numbers that go in the email template
 NUMS="123-456-7890,234-567-8901"
+
+# email address to send the verification emails to
+VERIF_ADDR="verification_address@somedomain.com"
 ```
 
 Also, this uses MS Edge headless, but you can remove the `executablePath` property in the puppeteer launch config if you want to use chromium.
