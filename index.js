@@ -108,19 +108,6 @@ async function main() {
     emailBody = emailBody.replace('[[NUM2]]', num2);
     emailBody = emailBody.replace('[[OUTLK_FRM]]', outlookFrm);
 
-    var transporter = nodemailer.createTransport({
-        host: 'smtp-mail.outlook.com',
-        secure: false,
-        port: 587,
-        tls: {
-            ciphers: 'SSLv3'
-        },
-        auth: {
-            user: outlookUid,
-            pass: outlookPwd
-        }
-    });
-
     var mailOptions = {
         from: `"${outlookFrm}" <${outlookUid}>`,
         to: 'verification@usmobile.com',
@@ -141,8 +128,36 @@ async function main() {
         ]
     }
 
-    if (!dryRun) {
+    await sendEmail(mailOptions)
+    
+}
 
+async function handleError(error) {
+    var mailOptions = {
+        from: `"${outlookFrm}" <${outlookUid}>`,
+        to: outlookUid,
+        subject: 'US Mobile verification failure',
+        html: `Error getting receipts for verification. Error: ${error}`
+    }
+    
+    await sendEmail(mailOptions)
+}
+
+async function sendEmail(mailOptions) {
+    var transporter = nodemailer.createTransport({
+        host: 'smtp-mail.outlook.com',
+        secure: false,
+        port: 587,
+        tls: {
+            ciphers: 'SSLv3'
+        },
+        auth: {
+            user: outlookUid,
+            pass: outlookPwd
+        }
+    });
+
+    if (!dryRun) {
         transporter.sendMail(mailOptions, function (error, info) {
             if (error) {
                 return console.log(error);
@@ -159,41 +174,6 @@ async function main() {
         console.log(transporter.options);
         console.log('mailOptions');
         console.log(mailOptions);
-    }
-}
-
-async function handleError(error) {
-
-    var transporter = nodemailer.createTransport({
-        host: 'smtp-mail.outlook.com',
-        secure: false,
-        port: 587,
-        tls: {
-            ciphers: 'SSLv3'
-        },
-        auth: {
-            user: outlookUid,
-            pass: outlookPwd
-        }
-    });
-
-    var mailOptions = {
-        from: `"${outlookFrm}" <${outlookUid}>`,
-        to: outlookUid,
-        subject: 'US Mobile verification failure',
-        html: `Error getting receipts for verification. Error: ${error}`
-    }
-
-    console.log(transporter.options);
-
-    if (!dryRun) {
-        transporter.sendMail(mailOptions, function (error, info) {
-            if (error) {
-                return console.log(error);
-            }
-
-            console.log(`Message sent: ${info.response}`);
-        });
     }
 }
 
